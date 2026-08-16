@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      .pickld-scroll-section {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        min-height: 650px;
+        overflow: hidden;
+        background: #111;
+      }
+
+      .pickld-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        z-index: 1;
+      }
+
+      .pickld-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.38),
+          rgba(0, 0, 0, 0.05)
+        );
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .pickld-content {
+        position: relative;
+        z-index: 5;
+        padding-top: 90px;
+        padding-left: 12%;
+      }
+
+      .pickld-content h1 {
+        width: 621px;
+        font-family: "Peacock";
+        font-style: normal;
+        font-weight: 700;
+        font-size: 90px;
+        line-height: 80px;
+        text-align: center;
+        text-transform: uppercase;
+        color: #ffffff;
+      }
+
+      .pickld-content h1 span {
+        color: #cce5ff;
+      }
+
+      .pickld-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        padding: 17px 23px;
+        background: #f24e07;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 7px;
+        font-family: "Peacock";
+        font-size: 15px;
+        font-weight: 800;
+        text-transform: uppercase;
+        transition: 0.25s ease;
+      }
+
+      .pickld-button:hover {
+        background: #f24e07;
+        transform: translateY(-2px);
+      }
+
+      .pickld-button span {
+        font-size: 20px;
+      }
+
+      .pickld-moving-logo {
+        position: absolute;
+        z-index: 10;
+        right: 28px;
+        top: 100%;
+        width: 284.01px;
+        transform: translate3d(var(--logo-x, 0px), -100%, 0);
+        will-change: transform;
+        pointer-events: none;
+      }
+
+      .pickld-moving-logo img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      @media (max-width: 767px) {
+        .pickld-scroll-section {
+          height: 85vh;
+          min-height: 600px;
+        }
+
+        .pickld-content {
+          padding: 70px 25px 0;
+        }
+
+        .pickld-content h1 {
+          font-size: 45px;
+          letter-spacing: -1px;
+        }
+
+        .pickld-button {
+          padding: 14px 18px;
+          font-size: 13px;
+        }
+
+        .pickld-moving-logo {
+          width: 85px;
+          right: 15px;
+        }
+      }
+    </style>
+    <section class="pickld-scroll-section">
+      <!-- Background Image -->
+      <img class="pickld-bg" src="./img/findusbg.jpg" alt="PICKL'D" />
+
+      <!-- Dark Overlay -->
+      <div class="pickld-overlay"></div>
+
+      <!-- Content -->
+      <div class="pickld-content">
+        <h1>
+          FIND US IN<br />
+          <span>REAL LIFE</span>
+        </h1>
+
+        <a href="#" class="pickld-button">
+          FIND A STOCKIST
+          <span>→</span>
+        </a>
+      </div>
+
+      <!-- Moving Logo -->
+      <div class="pickld-moving-logo" id="pickldMovingLogo">
+        <img src="./img/pickld.png" alt="PICKL'D Logo" />
+      </div>
+    </section>
+    <script>
+      (function () {
+        const section = document.querySelector(".pickld-scroll-section");
+        const logo = document.getElementById("pickldMovingLogo");
+        if (!section || !logo) return;
+
+        let logoX = 0;
+        let targetX = 0;
+
+        const MAX_LEFT = -420;
+
+        const MAX_RIGHT = 0;
+
+        const SCROLL_SPEED = 0.55;
+
+        const SMOOTHNESS = 0.12;
+
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener(
+          "scroll",
+          function () {
+            const currentScrollY = window.scrollY;
+            const difference = currentScrollY - lastScrollY;
+            const rect = section.getBoundingClientRect();
+            const sectionVisible =
+              rect.bottom > 0 && rect.top < window.innerHeight;
+            if (sectionVisible) {
+              if (difference > 0) {
+                targetX -= difference * SCROLL_SPEED;
+              } else if (difference < 0) {
+                targetX -= difference * SCROLL_SPEED;
+              }
+              targetX = Math.max(MAX_LEFT, Math.min(MAX_RIGHT, targetX));
+            }
+
+            lastScrollY = currentScrollY;
+          },
+
+          {
+            passive: true,
+          },
+        );
+        function animate() {
+          logoX += (targetX - logoX) * SMOOTHNESS;
+          logo.style.setProperty("--logo-x", logoX + "px");
+          requestAnimationFrame(animate);
+        }
+        animate();
+      })();
+    </script>
+  </body>
+</html>
